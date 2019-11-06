@@ -7,7 +7,6 @@ from random import randrange
 from copy import deepcopy
 from get_cat import get_cat
 
-engine = create_engine('sqlite:///database.db', echo = True)
 app = Flask(__name__)
 app.secret_key = 'admin'
 
@@ -19,6 +18,7 @@ def index():
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
+   engine = create_engine('sqlite:///database.db', echo = True)
    if request.method == 'POST':
       DBSession = sessionmaker(bind = engine)
       database_session = DBSession()
@@ -62,6 +62,7 @@ def logout():
 
 @app.route('/reset_attempt/<int:level>')
 def reset_attempt(level):
+   engine = create_engine('sqlite:///database.db', echo = True)
    DBSession = sessionmaker(bind = engine)
    database_session = DBSession()
    db_attempt = database_session.query(Attempt).filter(Attempt.user_id == session['user_id']).filter(Attempt.level == level).first()
@@ -74,6 +75,7 @@ def reset_attempt(level):
    return redirect(url_for('level' + str(level)))
 
 def successful_attempt(level, result):
+   engine = create_engine('sqlite:///database.db', echo = True)
    session['best_results'][level] = result if session['best_results'][level] == -1 else min(session['best_results'][level], result)
    DBSession = sessionmaker(bind = engine)
    database_session = DBSession()
@@ -117,6 +119,7 @@ def validate_level0(guess):
 
 @app.route('/level0', methods = ['POST', 'GET'])
 def level0():
+   engine = create_engine('sqlite:///database.db', echo = True)
    previous_guesses = session['previous_guesses'][0]
    
    if request.method == 'POST':
