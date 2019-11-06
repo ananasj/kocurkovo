@@ -4,19 +4,7 @@ from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
 
-engine = create_engine(
-        engine.url.URL(
-            drivername='postgres+pg8000',
-            username='anderle_michal',
-            password='tajneheslo',
-            database='binarysearch-database',
-            query={
-            'unix_sock': '/cloudsql/{}/.s.PGSQL.5432'.format('kocurkovo:europe-west1:binarysearch-database')
-            }
-            ),
-)
-
-#engine = create_engine('sqlite:///database.db', echo=True)
+engine = create_engine('sqlite:///database.db', echo=True)
 Base = declarative_base()
 
 ########################################################################
