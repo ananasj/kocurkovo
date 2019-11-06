@@ -137,7 +137,7 @@ def level0():
       elif 'freeze0' in session:
          flash('Uz si nasiel riesenie, ak chces hrat znova, restartuj hru.', 'warning')
    
-   return render_template('level0.html', last_guess = -1 if len(previous_guesses) == 0 else previous_guesses[-1], guesses = previous_guesses,
+   return render_template('level0.html', last_guess = -1 if len(previous_guesses) == 0 else previous_guesses[0], guesses = previous_guesses,
                            attempt = session['attempts'][0], user = session['user'], best_result = session['best_results'][0], cat_link = get_cat())
 
 if __name__ == '__main__':
