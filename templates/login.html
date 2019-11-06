@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+	<head>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width initial-scale=1" />
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	  <title>Binárne vyhľadávanie</title>
+	  <meta name="description" content="Výskum binárneho vyhľadávania.">
+
+	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	  <link rel="stylesheet" href="css/main.css">
+	</head>
+
+	<body>
+		<div class="container main-content">
+			<h2>Prihlasovanie</h2> <br/><br/>
+			<form action = "{{ url_for('login') }}" method = "POST">
+				<div class="form-group">
+					<label for="username">Meno</label>
+					<input type="text" class="form-control" id="username" placeholder="Prihlasovacie meno" name="user" autofocus />
+				</div>
+				<div class="form-group">
+					<label for="password">Heslo</label>
+					<input type="password" class="form-control" id="password" name="password" />
+				</div>
+				<button type="submit" class="btn btn-primary">Prihlásiť sa</button>
+			</form>
+		</div>
+	</body>
+</html>

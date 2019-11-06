@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+	<head>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width initial-scale=1" />
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	  <title>Binárne vyhľadávanie</title>
+	  <meta name="description" content="Výskum binárneho vyhľadávania.">
+
+	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	</head>
+
+	<body>
+		<div class="container main-content">
+
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			  <a class="navbar-brand" href="/">Mačičky</a>
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			  	<ul class="navbar-nav mr-auto">
+			  		<li class="nav-item">
+			      	<a class="nav-item nav-link" href="{{ url_for('index') }}">Hlavná stránka <span class="sr-only">(current)</span></a>
+			      </li>
+			      <li class="nav-item active">
+			      	<a class="nav-item nav-link active" href="{{ url_for('level0') }}">Level 1</a>
+			      </li>
+			    </ul>
+			    <span class="navbar-text">Prihlásený ako <b>{{ user }}</b> (</span>
+			    <a class="nav-item nav-link logout-link" href="{{ url_for('logout') }}">Odhlásiť sa</a>
+			    <span class="navbar-text">)</span>
+			  </div>
+			</nav>
+
+			<p>TODO: popis levelu</p>
+
+			<div class="row">
+				<div class="col-sm-6">
+
+					<h3>Vitaj na cisle {{ last_guess[0] }}</h3>
+
+					<img src="{{ cat_link }}" />
+
+					<h4>Pre zadanu hodnotu si zistil, ze vysledok je {{ last_guess[1] }}</h4>
+
+					<br/> <br/>
+					<form action = "{{ url_for('level0') }}" method = "POST">
+						<h3>Zadaj cislo</h3>
+						<input type = "number" name = 'value' autofocus/> <br/>
+						<input type = "submit" value = "Hadat"> <br/>
+					</form>
+					{% with messages = get_flashed_messages(with_categories=true) %}
+			    	{% if messages %}
+			       	{% for category, message in messages %}
+		       			<div class="alert alert-{{category}}" role="alert">
+		       				{{ message}}
+		       			</div>
+			       	{% endfor %}
+			    	{% endif %}
+				  {% endwith %}
+				</div>
+
+				<div class="col-sm-6">
+
+					<ul>
+						{% for value, result in guesses %}
+							<li>V dome {{ value }} si nasiel cislo {{ result }}</li>
+						{% endfor %}
+					</ul>
+
+				</div>
+			</div>
+
+			<br/> <br/>
+			{% if best_result != -1 %}
+				<p>Zatial najlepsi dosiahnuty vysledok na tomto leveli je {{ best_result}} hadani.</p>
+			{% endif %}
+			<a class="btn btn-primary" href = "{{ url_for('reset_attempt', level = 0) }}">Restartuj</a>
+
+		</div>
+	</body>
+</html>
