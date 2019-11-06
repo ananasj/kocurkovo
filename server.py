@@ -141,4 +141,4 @@ def level0():
                            attempt = session['attempts'][0], user = session['user'], best_result = session['best_results'][0], cat_link = get_cat())
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   app.run(port = 8080, debug = True)
