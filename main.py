@@ -141,7 +141,8 @@ def level0():
          flash('Uz si nasiel riesenie, ak chces hrat znova, restartuj hru.', 'warning')
    
    return render_template('level0.html', last_guess = -1 if len(previous_guesses) == 0 else previous_guesses[0], guesses = previous_guesses,
-                           attempt = session['attempts'][0], user = session['user'], best_result = session['best_results'][0], cat_link = get_cat())
+                           attempt = session['attempts'][0], user = session['user'], best_result = session['best_results'][0],
+                           cat_link = get_cat(), location = RESULT_0)
 
 if __name__ == '__main__':
    app.run(port = 8080, debug = True)
