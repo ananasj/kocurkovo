@@ -16,7 +16,7 @@
 		<div class="container main-content">
 
 			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			  <a class="navbar-brand" href="/">Mačičky</a>
+			  <a class="navbar-brand" href="{{ url_for(index) }}">Mačičky</a>
 			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 			    <span class="navbar-toggler-icon"></span>
 			  </button>
@@ -35,16 +35,25 @@
 			  </div>
 			</nav>
 
-			<p>TODO: popis levelu</p>
+			<h2>Vitajte na Agátovej ulici!</h2>
+			<p>Na tejto ulici sa nachádza <strong>100</strong> domov očíslovaných od 1 po 100. V jednom z nich býva aj kocúr Murko. Keď prídete k niektorému domu, vedia vám povedať, či Murko býva v dome s väčším alebo menším číslom. Na čo najmenej návštev nájdite číslo domu, v ktorom býva Murko.</p>
+			<p><em>Na vyriešenie tejto úlohy je potrebné nájsť Murka na 7 návštev.</em></p>
 
 			<div class="row">
 				<div class="col-sm-6">
+					{% if last_guess != -1 %}
+						<h3>Vitaj v dome číslo {{ last_guess[0]}}</h3>
 
-					<h3>Vitaj na cisle {{ last_guess[0] }}</h3>
+						<img src="{{ cat_link }}" />
 
-					<img src="{{ cat_link }}" />
-
-					<h4>Pre zadanu hodnotu si zistil, ze vysledok je {{ last_guess[1] }}</h4>
+						{% if last_guess[1] < location %}
+							<h4>Kocúr Murko býva v dome s <strong>väčším</strong> číslom.</h4>
+						{% elif last_guess[1] > location %}
+							<h4>Kocúr Murko býva v dome s <strong>menším</strong> číslom.</h4>
+						{% else %}
+							<h4>Gratulujem, v tomto dome býva kocúr Murko.</h4>
+						{% endif %}
+					{% endif %}
 
 					<br/> <br/>
 					<form action = "{{ url_for('level0') }}" method = "POST">
@@ -67,7 +76,13 @@
 
 					<ul>
 						{% for value, result in guesses %}
-							<li>V dome {{ value }} si nasiel cislo {{ result }}</li>
+							{% if result < location %}
+								<li>V dome {{ value }} ti povedali, že Murko býva v dome s <strong>väčším</strong> číslom.</li>
+							{% elif result > location %}
+								<li>V dome {{ value }} ti povedali, že Murko býva v dome s <strong>menším</strong> číslom.</li>
+							{% else %}
+								<li>V dome {{ value }} býva kocúr Murko.</li>
+							{% endif %}
 						{% endfor %}
 					</ul>
 
