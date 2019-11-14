@@ -10,13 +10,13 @@ from get_cat import get_cat
 app = Flask(__name__)
 app.secret_key = 'admin'
 
-@app.route('/kocurkovo/')
+@app.route('/')
 def index():
    if 'user_id' not in session:
       return redirect(url_for('login'))
    return render_template('index.html', user = session['user'])
 
-@app.route('/kocurkovo/login', methods = ['POST', 'GET'])
+@app.route('/login', methods = ['POST', 'GET'])
 def login():
    engine = create_engine('sqlite:///database.db', echo = True)
    if request.method == 'POST':
@@ -53,14 +53,14 @@ def login():
       return redirect(url_for('index'))
    return render_template('login.html')
 
-@app.route('/kocurkovo/logout')
+@app.route('/logout')
 def logout():
    session.pop('user_id', None)
    session.pop('user', None)
    session.pop('previous_guesses', None)
    return redirect(url_for('index'))
 
-@app.route('/kocurkovo/reset_attempt/<int:level>')
+@app.route('/reset_attempt/<int:level>')
 def reset_attempt(level):
    engine = create_engine('sqlite:///database.db', echo = True)
    DBSession = sessionmaker(bind = engine)
@@ -117,7 +117,7 @@ def validate_level0(guess):
       return False
    return True
 
-@app.route('/kocurkovo/level0', methods = ['POST', 'GET'])
+@app.route('/level0', methods = ['POST', 'GET'])
 def level0():
    engine = create_engine('sqlite:///database.db', echo = True)
    previous_guesses = session['previous_guesses'][0]
