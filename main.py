@@ -252,7 +252,7 @@ def level2():
    previous_guesses = session['previous_guesses'][2]
    
    if request.method == 'POST':
-      if validate_level1(request.form['value']) and not 'freeze2' in session:
+      if validate_level2(request.form['value']) and not 'freeze2' in session:
          guess = int(request.form['value'])
          DBSession = sessionmaker(bind = engine)
          database_session = DBSession()
