@@ -14,7 +14,7 @@ app.secret_key = 'admin'
 def index():
    if 'user_id' not in session:
       return redirect(url_for('login'))
-   return render_template('index.html', user = session['user'])
+   return render_template('index.html', user = session['user'], results = session['best_results'])
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
@@ -48,7 +48,6 @@ def login():
          for i in range(3):
             submits = database_session.query(Submit).filter(Submit.user_id == user.id).filter(Submit.attempt == session['attempts'][i]).filter(Submit.level == i).order_by(Submit.time.desc())
             for submit in submits:
-               print(submit.user_id, submit.guess, submit.result, submit.attempt, submit.level)
                session['previous_guesses'][i].append((submit.guess, submit.result))
       return redirect(url_for('index'))
    return render_template('login.html')
@@ -113,7 +112,7 @@ def get_answer_level0(previous_guesses, guess):
 
 def validate_level0(guess):
    if len(str(guess)) == 0 or int(guess) < 1 or int(guess) > SIZE_0:
-      flash('Zadana hodnota nebola v rozsahu 1 az %s' % SIZE_0, 'danger')
+      flash('Zadana hodnota nebola z rozsahu 1 az %s' % SIZE_0, 'danger')
       return False
    return True
 
@@ -142,6 +141,60 @@ def level0():
    
    return render_template('level0.html', last_guess = -1 if len(previous_guesses) == 0 else previous_guesses[0], guesses = previous_guesses,
                            attempt = session['attempts'][0], user = session['user'], best_result = session['best_results'][0],
+                           cat_link = get_cat(), location = RESULT_0)
+
+SIZE_1 = 1000
+RANGE_1 = 100000
+RESULT_1 = 10000
+
+def get_answer_level1(previous_guesses, guess):
+   previous_guesses.append((0, 0))
+   previous_guesses.append((SIZE_1 + 1, RANGE_1 + 1))
+   previous_guesses.sort()
+   for i in range(len(previous_guesses) - 1):
+      if previous_guesses[i][1] < RESULT_1 and RESULT_1 < previous_guesses[i+1][1]:
+         if abs(guess - previous_guesses[i][0]) < abs(guess - previous_guesses[i+1][0]):
+            previous_guesses.append((previous_guesses[i+1][0] - 1, RESULT_1))
+         else:
+            previous_guesses.append((previous_guesses[i][0] + 1, RESULT_1))
+   previous_guesses.sort()
+   for i in range(len(previous_guesses) - 1):
+      if previous_guesses[i][0] == guess:
+         return previous_guesses[i][1]
+      if previous_guesses[i][0] < guess and guess < previous_guesses[i+1][0]:
+         return get_number_from_interval(previous_guesses[i], previous_guesses[i+1], guess)
+
+def validate_level1(guess):
+   if len(str(guess)) == 0 or int(guess) < 1 or int(guess) > SIZE_1:
+      flash('Zadana hodnota nebola z rozsahu 1 az %s' % SIZE_1, 'danger')
+      return False
+   return True
+
+@app.route('/level1', methods = ['POST', 'GET'])
+def level1():
+   engine = create_engine('sqlite:///database.db', echo = True)
+   previous_guesses = session['previous_guesses'][1]
+   
+   if request.method == 'POST':
+      if validate_level1(request.form['value']) and not 'freeze1' in session:
+         guess = int(request.form['value'])
+         DBSession = sessionmaker(bind = engine)
+         database_session = DBSession()
+         answer = get_answer_level1(deepcopy(previous_guesses), guess)
+         database_session.add(Submit(session['user_id'], guess, answer, datetime.now(), session['attempts'][1], 1))
+         database_session.commit()
+         previous_guesses = [(guess, answer)] + previous_guesses
+         session['previous_guesses'][1] = previous_guesses
+         session.modified = True
+         if answer == RESULT_1:
+            session['freeze1'] = True
+            flash('Super! Nasiel si hladane cislo na %s pokusov' % len(previous_guesses), 'success')
+            successful_attempt(1, len(previous_guesses))
+      elif 'freeze1' in session:
+         flash('Uz si nasiel riesenie, ak chces hrat znova, restartuj hru.', 'warning')
+   
+   return render_template('level1.html', last_guess = -1 if len(previous_guesses) == 0 else previous_guesses[0], guesses = previous_guesses,
+                           attempt = session['attempts'][1], user = session['user'], best_result = session['best_results'][1],
                            cat_link = get_cat(), location = RESULT_0)
 
 if __name__ == '__main__':

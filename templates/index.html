@@ -5,18 +5,19 @@
 	  <meta name="viewport" content="width=device-width initial-scale=1" />
 	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	  <title>Binárne vyhľadávanie</title>
+	  <title>Stratený kocúrik</title>
 	  <meta name="description" content="Výskum binárneho vyhľadávania.">
 
 	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
 	</head>
 
 	<body>
 		<div class="container main-content">
 
 			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			  <a class="navbar-brand" href="{{ url_for('index') }}">Mačičky</a>
+			  <a class="navbar-brand" href="{{ url_for('index') }}">Stratený kocúrik</a>
 			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 			    <span class="navbar-toggler-icon"></span>
 			  </button>
@@ -26,7 +27,10 @@
 			      	<a class="nav-item nav-link text-nowrap active" href="{{ url_for('index') }}">Hlavná stránka <span class="sr-only">(current)</span></a>
 			      </li>
 			      <li class="nav-item">
-			      	<a class="nav-item nav-link" href="{{ url_for('level0') }}">Level 1</a>
+			      	<a class="nav-item nav-link" href="{{ url_for('level0') }}">Agátová ulica</a>
+			      </li>
+			      <li class="nav-item">
+			      	<a class="nav-item nav-link" href="{{ url_for('level1') }}">Biela ulica</a>
 			      </li>
 			    </ul>
 			    <span class="navbar-text">Prihlásený ako <b>{{ user }}</b> (</span>
@@ -34,6 +38,62 @@
 			    <span class="navbar-text">)</span>
 			  </div>
 			</nav>
+
+			<br/><br/>
+			<p>Vykračuješ si ulicou neďaleko tvojho domu, keď tu zrazu zbadáš opusteného kocúrika, ktorý na teba smutne pozerá. Príde ti ho ľúto a chcel/a by si mu pomôcť. Na obojku je však napísané iba meno <em>Murko</em> a číslo <strong>10&nbsp;000</strong>, žiadna adresa. Neostáva ti teda nič iné, ako ísť od domu k domu a pýtať sa ľudí, či im Murko nechýba. Iba, že by to išlo aj rýchlejšie...</p><br/>
+
+			<h3>Úloha</h3>
+			<p>Tvojou úlohou bude nájsť dom, v ktorom býva Murko na čo <strong>najmenej návštev</strong>. Postupne navštíviš tri ulice, ktoré sa líšia počtom domov, ale aj tým, čo ti pri návšteve domu vedia povedať o Murkovi. Nuž neotáľaj a pusti sa do riešenia! Začni na Agátovej ulici, potom sa presuň na Bielu a ak ti zvýši čas, tak vyskúšaj aj Cesnakovú.</p>
+
+			<br/><br/>
+			<h3>Výsledky</h3>
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Ulica</th>
+			      <th scope="col">Najmenší počet návštev</th>
+			      <th scope="col">Získané body</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row">Agátová</th>
+			      {% if results[0] == -1 %}
+				      <td>X</td>
+				      <td>0</td>
+				    {% else %}
+				    	<td>{{ results[0] }}</td>
+				    	{% if results[0] <= 7 %}
+				    		<td>4</td>
+				    	{% elif results[0] <= 8 %}
+				    		<td>3</td>
+				    	{% elif results[0] <= 13 %}
+				    		<td>2</td>
+				    	{% else %}
+				    		<td>1</td>
+				    	{% endif %}
+				    {% endif %}
+			    </tr>
+			    <tr>
+			      <th scope="row">Biela</th>
+			      {% if results[1] == -1 %}
+				      <td>X</td>
+				      <td>0</td>
+				    {% else %}
+				    	<td>{{ results[1] }}</td>
+				    	{% if results[1] <= 11 %}
+				    		<td>4</td>
+				    	{% elif results[1] <= 13 %}
+				    		<td>3</td>
+				    	{% elif results[1] <= 24 %}
+				    		<td>2</td>
+				    	{% else %}
+				    		<td>1</td>
+				    	{% endif %}
+				    {% endif %}
+			    </tr>
+			  </tbody>
+			</table>
 		</div>
 	</body>
 
