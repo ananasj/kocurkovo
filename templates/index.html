@@ -32,6 +32,9 @@
 			      <li class="nav-item">
 			      	<a class="nav-item nav-link" href="{{ url_for('level1') }}">Biela ulica</a>
 			      </li>
+			      <li class="nav-item">
+			      	<a class="nav-item nav-link" href="{{ url_for('level2') }}">Cesnaková ulica</a>
+			      </li>
 			    </ul>
 			    <span class="navbar-text">Prihlásený ako <b>{{ user }}</b> (</span>
 			    <a class="nav-item nav-link logout-link" href="{{ url_for('logout') }}">Odhlásiť sa</a>
@@ -86,6 +89,24 @@
 				    	{% elif results[1] <= 13 %}
 				    		<td>3</td>
 				    	{% elif results[1] <= 24 %}
+				    		<td>2</td>
+				    	{% else %}
+				    		<td>1</td>
+				    	{% endif %}
+				    {% endif %}
+			    </tr>
+			    <tr>
+			      <th scope="row">Cesnaková</th>
+			      {% if results[2] == -1 %}
+				      <td>X</td>
+				      <td>0</td>
+				    {% else %}
+				    	<td>{{ results[2] }}</td>
+				    	{% if results[2] <= 12 %}
+				    		<td>4</td>
+				    	{% elif results[2] <= 14 %}
+				    		<td>3</td>
+				    	{% elif results[2] <= 24 %}
 				    		<td>2</td>
 				    	{% else %}
 				    		<td>1</td>

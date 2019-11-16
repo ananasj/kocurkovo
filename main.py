@@ -88,6 +88,9 @@ RANGE_0 = 10000
 RESULT_0 = 1000
 
 def get_number_from_interval(beg, end, guess):
+   if end[1] < beg[1]:
+      beg, end = (beg[0], end[1]), (end[0], beg[1])
+      guess = end[0] - (guess - beg[0])
    values = end[1] - beg[1]
    count = end[0] - beg[0] + 1
    step = values//count
@@ -195,7 +198,80 @@ def level1():
    
    return render_template('level1.html', last_guess = -1 if len(previous_guesses) == 0 else previous_guesses[0], guesses = previous_guesses,
                            attempt = session['attempts'][1], user = session['user'], best_result = session['best_results'][1],
-                           cat_link = get_cat(), location = RESULT_0)
+                           cat_link = get_cat(), location = RESULT_1)
+
+SIZE_2 = 100
+RESULT_2 = 10000
+
+def get_number_at_least(beg, end, guess):
+   if end[0] - beg[0] == 2:
+      return RESULT_2
+   maxi = max(beg[1], end[1])
+   step = (RESULT_2 - maxi) // (end[0] - beg[0])
+   return RESULT_2 - step * max((end[0] - guess), (guess - beg[0]))
+
+def get_answer_level2(previous_guesses, guess):
+   previous_guesses.append((-1, -1))
+   previous_guesses.append((0, 0))
+   previous_guesses.append((SIZE_2, -1))
+   previous_guesses.sort()
+   max_pos = 0
+   for i in range(len(previous_guesses)):
+      if previous_guesses[i][1] > previous_guesses[max_pos][1]:
+         max_pos = i
+   for i in range(1, len(previous_guesses)):
+      if previous_guesses[i][0] == guess:
+         return previous_guesses[i][1]
+      if previous_guesses[i-1][0] < guess and guess < previous_guesses[i][0]:
+         if i-1 == max_pos:
+            left = guess - previous_guesses[i-2][0]
+            right = previous_guesses[i][0] - previous_guesses[i-1][0]
+            if left > right:
+               return get_number_from_interval(previous_guesses[i-1], previous_guesses[i], guess)
+            else:
+               return get_number_at_least(previous_guesses[i-1], previous_guesses[i], guess)
+         elif i == max_pos:
+            left = previous_guesses[i][0] - previous_guesses[i-1][0]
+            right = previous_guesses[i+1][0] - guess
+            if right > left:
+               return get_number_from_interval(previous_guesses[i-1], previous_guesses[i], guess)
+            else:
+               return get_number_at_least(previous_guesses[i-1], previous_guesses[i], guess)
+         else:
+            return get_number_from_interval(previous_guesses[i-1], previous_guesses[i], guess)
+
+def validate_level2(guess):
+   if len(str(guess)) == 0 or int(guess) < 1 or int(guess) > SIZE_2:
+      flash('Zadana hodnota nebola z rozsahu 1 az %s' % SIZE_2, 'danger')
+      return False
+   return True
+
+@app.route('/level2', methods = ['POST', 'GET'])
+def level2():
+   engine = create_engine('sqlite:///database.db', echo = True)
+   previous_guesses = session['previous_guesses'][2]
+   
+   if request.method == 'POST':
+      if validate_level1(request.form['value']) and not 'freeze2' in session:
+         guess = int(request.form['value'])
+         DBSession = sessionmaker(bind = engine)
+         database_session = DBSession()
+         answer = get_answer_level2(deepcopy(previous_guesses), guess)
+         database_session.add(Submit(session['user_id'], guess, answer, datetime.now(), session['attempts'][2], 2))
+         database_session.commit()
+         previous_guesses = [(guess, answer)] + previous_guesses
+         session['previous_guesses'][2] = previous_guesses
+         session.modified = True
+         if answer == RESULT_2:
+            session['freeze2'] = True
+            flash('Super! Nasiel si hladane cislo na %s pokusov' % len(previous_guesses), 'success')
+            successful_attempt(2, len(previous_guesses))
+      elif 'freeze2' in session:
+         flash('Uz si nasiel riesenie, ak chces hrat znova, restartuj hru.', 'warning')
+   
+   return render_template('level2.html', last_guess = -1 if len(previous_guesses) == 0 else previous_guesses[0], guesses = previous_guesses,
+                           attempt = session['attempts'][2], user = session['user'], best_result = session['best_results'][2],
+                           cat_link = get_cat(), location = RESULT_2)
 
 if __name__ == '__main__':
    app.run(port = 8080, debug = True)
