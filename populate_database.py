@@ -15,33 +15,26 @@ def get_char():
 		znaky.append(chr(ord('0') + i))
 	return choice(znaky)
 
-# create a Session
-Session = sessionmaker(bind=engine)
-session = Session()
-
-user = User("admin","zabaakorytnackarobiavyskum")
-session.add(user)
-
-user = User("zaba","zaba")
-session.add(user)
-
-user = User("korytnacka","korytnacka")
-session.add(user)
-
 ovocie = ['jablko', 'hruska', 'ceresna', 'broskyna', 'slivka', 'marhula', 'ringlota', 'cucoriedka', 'brusnica', 'egres', 'hrozno', 'malina',
 		  'jahoda', 'morusa', 'gastan', 'pomaranc', 'banan', 'mandarinka', 'ananas', 'citron', 'marakuja', 'avokado', 'datla', 'figa', 'grapefruit',
 		  'guave', 'kivi', 'limetka', 'mango', 'marakuja', 'oliva', 'papaja', 'pomelo']
 
-print(len(ovocie))
-for x in ovocie:
-	password = ''
-	for i in range(6):
-		password = password + get_char()
-	print(x, password)
-	user = User(x, password)
-	session.add(user)
+zvierata = ['pes', 'macka', 'vevericka', 'zajac', 'kralik', 'opica', 'uskatec', 'hroch', 'slon', 'zirafa', 'panda', 'orangutan', 'jezko', 'had', 'uzovka', 'chobotnica',
+            'sykorka', 'gepard', 'tiger', 'mys', 'plch', 'vlk', 'liska', 'medved', 'jelen', 'srnka', 'dikobraz', 'mravec', 'fenek', 'lev', 'antilopa', 'simpanz', 'kon']
 
-# commit the record the database
-session.commit()
+def add_new_users(names):
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
-session.commit()
+    for x in names:
+        password = ''
+        for i in range(6):
+            password = password + get_char()
+        print(x, password)
+        user = User(x, password)
+        session.add(user)
+
+    session.commit()
+    session.commit()
+
+add_new_users(zvierata)
